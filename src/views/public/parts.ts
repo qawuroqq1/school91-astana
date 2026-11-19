@@ -6,6 +6,9 @@ import { humanSize } from "../../lib/uploads.ts";
 import { icon } from "../icons.ts";
 import { splitWords } from "../layout.ts";
 import type { View } from "../context.ts";
+import { config } from "../../config.ts";
+
+export const IS_STATIC = (): boolean => config.staticExport;
 
 const CAT_ICON: Record<string, string> = { news: "newspaper", events: "calendar", announcements: "megaphone", achievements: "trophy" };
 
@@ -92,6 +95,11 @@ export function formAlert(kind: "success" | "error", text: string): SafeHtml {
 export function hiddenTokens(v: View): SafeHtml {
   // _token: CSRF-like cookie match; website: honeypot that humans never fill.
   return html`<input type="hidden" name="_token" value="${v.formToken}" /><div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div><input type="hidden" name="_ts" value="${Date.now()}" />`;
+}
+
+export function staticFormNotice(v: View): SafeHtml {
+  return html`<div class="notice" role="note">${icon("info", "icon")}<div><p>${v.t("static.form")}</p>
+    <p>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : ""}${v.s.phone && v.s.email ? " · " : ""}${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : ""}</p></div></div>`;
 }
 
 export function richText(body: string): SafeHtml {

@@ -88,7 +88,7 @@ button { cursor: pointer; }
 :focus-visible { outline: 3px solid var(--teal-500); outline-offset: 3px; border-radius: 6px; }
 ::selection { background: var(--teal-100); color: var(--navy-900); }
 ul[role="list"], ol[role="list"] { list-style: none; padding: 0; margin: 0; }
-mark { background: var(--amber-100); color: inherit; padding: 0 0.15em; border-radius: 3px; }
+mark { background: var(--amber-100); color: inherit; padding: 0; border-radius: 2px; box-shadow: 0 0 0 2px var(--amber-100); }
 [hidden] { display: none !important; }
 
 .container { width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto; }

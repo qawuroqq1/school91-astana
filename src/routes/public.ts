@@ -94,6 +94,21 @@ function toFormState(lang: Lang, r: Validated, successKey: "form.success" | "blo
 
 /* --------------------------------------------------------------- search */
 
+/** Flat index used by the static (GitHub Pages) search. */
+export function searchIndex(lang: Lang): { type: string; title: string; href: string; text: string; context: string }[] {
+  const out: { type: string; title: string; href: string; text: string; context: string }[] = [];
+  const pageBodies = new Map(pages.allForLang(lang).map((p) => [p.key, p]));
+  for (const s of SECTIONS) for (const it of s.items) {
+    if (it.kind === "link") continue;
+    const key = `${s.slug}/${it.slug}`;
+    const p = pageBodies.get(key);
+    out.push({ type: "page", title: it.title[lang] || "", href: `/${lang}/${key}`, text: p ? truncate(stripTags(`${p.lead} ${p.body}`), 2000) : "", context: s.title[lang] || "" });
+  }
+  for (const n of news.list(lang, { limit: 1000, offset: 0 }).items) out.push({ type: "news", title: n.title, href: `/${lang}/news/${n.slug}`, text: truncate(stripTags(`${n.excerpt} ${n.body}`), 2000), context: "" });
+  for (const d of documents.all()) out.push({ type: "doc", title: d.title[lang] || d.title.ru || d.title.kz || d.title.en || d.original_name, href: d.file, text: d.original_name, context: "" });
+  return out;
+}
+
 function search(v: View, q: string): SearchHit[] {
   const ql = q.toLocaleLowerCase();
   const hits: (SearchHit & { score: number })[] = [];

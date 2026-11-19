@@ -31,4 +31,6 @@ export const config = {
   telegramChatId: process.env.TELEGRAM_CHAT_ID || "",
   sessionDays: int("SESSION_DAYS", 7),
   isTest: process.env.NODE_ENV === "test",
+  /** Static export for GitHub Pages: forms are replaced by contact info, search runs in the browser. */
+  staticExport: process.env.STATIC_EXPORT === "1",
 };

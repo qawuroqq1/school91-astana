@@ -256,6 +256,69 @@
     applyPrefs(p);
   });
 
+  // Static hosting (GitHub Pages) can't read the cookie on the server: apply saved prefs here.
+  {
+    const saved = readPrefs();
+    if (saved.on && !doc.classList.contains("a11y")) applyPrefs(saved);
+  }
+
+  /* ------------------------------------------- static search (GitHub Pages) */
+  const staticSearch = $("[data-static-search]");
+  if (staticSearch) {
+    const d = staticSearch.dataset;
+    const base = document.body.dataset.staticBase || "";
+    const q = (new URLSearchParams(location.search).get("q") || "").trim();
+    const input = $(".search-big input");
+    if (input) input.value = q;
+    const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    const mark = (text, query) => {
+      const lower = text.toLocaleLowerCase();
+      const ql = query.toLocaleLowerCase();
+      let out = "";
+      let i = 0;
+      let idx;
+      while ((idx = lower.indexOf(ql, i)) !== -1) {
+        out += esc(text.slice(i, idx)) + "<mark>" + esc(text.slice(idx, idx + query.length)) + "</mark>";
+        i = idx + query.length;
+      }
+      return out + esc(text.slice(i));
+    };
+    if (q.length === 1) staticSearch.innerHTML = `<p class="muted">${esc(d.tShort)}</p>`;
+    if (q.length >= 2) {
+      fetch(`${base}/search-index-${d.lang}.json`)
+        .then((r) => r.json())
+        .then((items) => {
+          const ql = q.toLocaleLowerCase();
+          const hits = items
+            .map((it) => {
+              const inTitle = it.title.toLocaleLowerCase().includes(ql);
+              const pos = it.text.toLocaleLowerCase().indexOf(ql);
+              return { ...it, score: (inTitle ? 10 : 0) + (pos >= 0 ? 1 : 0), pos };
+            })
+            .filter((h) => h.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 60);
+          if (!hits.length) {
+            staticSearch.innerHTML = `<div class="empty"><p>${esc(d.tNone.replace("{q}", q))}</p></div>`;
+            return;
+          }
+          const typeLabel = { page: d.tPage, news: d.tNews, doc: d.tDoc };
+          staticSearch.innerHTML =
+            `<p class="search-count" role="status">${esc(d.tResults.replace("{n}", hits.length))}</p><ol class="hits">` +
+            hits
+              .map((h) => {
+                const start = Math.max(0, h.pos - 70);
+                const snippet = h.pos >= 0 ? (start ? "…" : "") + h.text.slice(start, start + 220) + "…" : "";
+                const href = h.href.startsWith("/") ? base + h.href + (h.type === "doc" ? "" : "/") : h.href;
+                return `<li class="hit"><span class="hit__type">${esc(typeLabel[h.type] || "")}${h.context ? " · " + esc(h.context) : ""}</span><a class="hit__title" href="${esc(href)}">${mark(h.title, q)}</a>${snippet ? `<p class="hit__snippet">${mark(snippet, q)}</p>` : ""}</li>`;
+              })
+              .join("") +
+            "</ol>";
+        })
+        .catch(() => (staticSearch.innerHTML = ""));
+    }
+  }
+
   /* --------------------------------------------------------- lightbox */
   const labels = document.body.dataset;
   function lightbox(links, index) {

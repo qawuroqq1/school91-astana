@@ -174,4 +174,6 @@ export const en: Dict = {
   "err.search": "Search the site",
 
   "date.today": "Today",
+
+  "static.form": "Form submission is disabled in this demo version of the site. Please contact the school by phone or email, or open the full version of the site.",
 };

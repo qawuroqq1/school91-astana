@@ -3,7 +3,7 @@ import { formatDate } from "../../i18n/index.ts";
 import type { BlogRow, ImageRow, AlbumRow } from "../../db/repo.ts";
 import { icon } from "../icons.ts";
 import { layout, pageHero, emptyState, pager } from "../layout.ts";
-import { field, formAlert, hiddenTokens } from "./parts.ts";
+import { field, formAlert, hiddenTokens, IS_STATIC, staticFormNotice } from "./parts.ts";
 import type { View } from "../context.ts";
 
 export interface FormState {
@@ -49,7 +49,7 @@ export function contactsView(v: View, form: FormState = {}): SafeHtml {
             ${gis ? html`<div class="map-card__bar"><span>${v.l(v.s.address)}</span><a class="btn btn--small btn--primary" href="${gis}" target="_blank" rel="noopener noreferrer">${v.t("contacts.route")} ${icon("external", "icon icon-xs")}</a></div>` : ""}
           </div>
         </div>
-        <form class="form card contact-page__form" method="post" action="${v.href("contacts")}" data-form novalidate data-reveal>
+        ${IS_STATIC() ? html`<div class="form card contact-page__form"><h2 class="form__title">${icon("message", "icon")}${v.t("contacts.form")}</h2>${staticFormNotice(v)}</div>` : html`<form class="form card contact-page__form" method="post" action="${v.href("contacts")}" data-form novalidate data-reveal>
           <h2 class="form__title">${icon("message", "icon")}${v.t("contacts.form")}</h2>
           ${form.notice ? formAlert(form.notice.kind, form.notice.text) : ""}
           ${hiddenTokens(v)}
@@ -64,7 +64,7 @@ export function contactsView(v: View, form: FormState = {}): SafeHtml {
           ${field(v, { name: "message", label: v.t("form.message"), type: "textarea", required: true, max: 5000, value: val.message, error: e.message })}
           ${consent(v, e.consent)}
           <button class="btn btn--primary btn--lg" type="submit" data-loading-text="${v.t("form.sending")}">${v.t("form.send")} ${icon("arrowRight", "icon icon-sm")}</button>
-        </form>
+        </form>`}
       </div>
     </section>`,
   );
@@ -90,7 +90,7 @@ export function blogView(v: View, data: { items: BlogRow[]; page: number; pages:
             : emptyState(v.t("blog.empty"), "message")}
           ${pager(v, data.page, data.pages, (p) => v.href("director-blog") + (p > 1 ? `?page=${p}` : ""))}
         </div>
-        <form class="form card blog-layout__form" id="ask" method="post" action="${v.href("director-blog")}#ask" data-form novalidate data-reveal>
+        ${IS_STATIC() ? html`<div class="form card blog-layout__form" id="ask"><h2 class="form__title">${icon("message", "icon")}${v.t("blog.ask")}</h2>${staticFormNotice(v)}</div>` : html`<form class="form card blog-layout__form" id="ask" method="post" action="${v.href("director-blog")}#ask" data-form novalidate data-reveal>
           <h2 class="form__title">${icon("message", "icon")}${v.t("blog.ask")}</h2>
           ${form.notice ? formAlert(form.notice.kind, form.notice.text) : ""}
           ${hiddenTokens(v)}
@@ -99,7 +99,7 @@ export function blogView(v: View, data: { items: BlogRow[]; page: number; pages:
           ${field(v, { name: "question", label: v.t("blog.question"), type: "textarea", required: true, max: 3000, value: val.question, error: e.question })}
           ${consent(v, e.consent)}
           <button class="btn btn--primary" type="submit" data-loading-text="${v.t("form.sending")}">${v.t("form.send")}</button>
-        </form>
+        </form>`}
       </div>
     </section>`,
   );
@@ -129,6 +129,7 @@ function highlight(text: string, q: string): SafeHtml {
 }
 
 export function searchView(v: View, q: string, hits: SearchHit[]): SafeHtml {
+  if (IS_STATIC()) return staticSearchView(v);
   const typeLabel = { page: v.t("search.type.page"), news: v.t("search.type.news"), doc: v.t("search.type.doc") };
   const typeIcon = { page: "file", news: "newspaper", doc: "download" };
   return layout(
@@ -192,6 +193,26 @@ export function galleryView(v: View, albums: AlbumRow[], images: ImageRow[], cur
           : albums.some((a) => a.count > 0) && !current
             ? ""
             : emptyState(v.t("gallery.empty"), "image")}
+      </div>
+    </section>`,
+  );
+}
+
+/** GitHub Pages version: results are computed in the browser from a JSON index. */
+function staticSearchView(v: View): SafeHtml {
+  return layout(
+    v,
+    { title: v.t("search.title"), noindex: true },
+    html`${pageHero(v, { title: v.t("search.title"), crumbs: [{ label: v.t("search.title") }] })}
+    <section class="section section--tight">
+      <div class="container narrow">
+        <form class="search-big" action="${v.href("search")}" method="get" role="search">
+          ${icon("search", "icon")}
+          <input type="search" name="q" placeholder="${v.t("search.placeholder")}" aria-label="${v.t("search.title")}" minlength="2" required />
+          <button class="btn btn--primary" type="submit">${v.t("search.submit")}</button>
+        </form>
+        <div data-static-search data-lang="${v.lang}" data-t-results="${v.t("search.results")}" data-t-none="${v.t("search.none")}" data-t-short="${v.t("search.short")}"
+          data-t-page="${v.t("search.type.page")}" data-t-news="${v.t("search.type.news")}" data-t-doc="${v.t("search.type.doc")}" aria-live="polite"></div>
       </div>
     </section>`,
   );

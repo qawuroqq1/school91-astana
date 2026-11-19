@@ -3,6 +3,7 @@ import { LANGS, LANG_META, type Lang } from "../i18n/langs.ts";
 import { SECTIONS } from "../site/structure.ts";
 import { announcements } from "../db/repo.ts";
 import { icon } from "./icons.ts";
+import { config } from "../config.ts";
 import type { Crumb, View } from "./context.ts";
 
 export interface LayoutOpts {
@@ -248,7 +249,7 @@ ${opts.noindex ? html`<meta name="robots" content="noindex" />` : ""}
 <link rel="stylesheet" href="/css/site.css?v=${ASSET_V}" />
 <script src="/js/site.js?v=${ASSET_V}" defer></script>
 </head>
-<body class="${opts.bodyClass || ""}" data-lang="${v.lang}" data-lb-close="${v.t("gallery.close")}" data-lb-prev="${v.t("gallery.prev")}" data-lb-next="${v.t("gallery.next")}">
+<body class="${opts.bodyClass || ""}" data-lang="${v.lang}"${config.staticExport ? raw(` data-static-base="${process.env.STATIC_BASE || ""}"`) : ""} data-lb-close="${v.t("gallery.close")}" data-lb-prev="${v.t("gallery.prev")}" data-lb-next="${v.t("gallery.next")}">
 <a class="skip-link" href="#main">${v.t("skip")}</a>
 ${header(v, langs, opts.active)}
 <main id="main" tabindex="-1">

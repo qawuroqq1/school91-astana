@@ -5,7 +5,7 @@ import { NEWS_CATEGORIES, findSection } from "../../site/structure.ts";
 import type { CommentRow, NewsFull, NewsLocalized } from "../../db/repo.ts";
 import { icon } from "../icons.ts";
 import { layout, pageHero, emptyState, pager, breadcrumbs, splitWords } from "../layout.ts";
-import { catLabel, coverFallback, field, formAlert, hiddenTokens, newsCard, richText } from "./parts.ts";
+import { catLabel, coverFallback, field, formAlert, hiddenTokens, newsCard, richText, IS_STATIC, staticFormNotice } from "./parts.ts";
 import type { View } from "../context.ts";
 
 const newsSection = findSection("news")!;
@@ -161,12 +161,12 @@ function commentsBlock(v: View, n: NewsFull, comments: CommentRow[], form: Comme
     ${comments.length
       ? html`<ol class="comments__list">${comments.map((c) => html`<li class="comment"><p class="comment__head"><strong>${c.name}</strong><time datetime="${c.created_at}">${formatDate(v.lang, c.created_at, true)}</time></p><p>${c.body}</p></li>`)}</ol>`
       : html`<p class="muted">${v.t("comments.empty")}</p>`}
-    <form class="form card" method="post" action="${v.href(`news/${n.slug}`)}#comments" data-form novalidate>
+    ${IS_STATIC() ? staticFormNotice(v) : html`<form class="form card" method="post" action="${v.href(`news/${n.slug}`)}#comments" data-form novalidate>
       ${form.notice ? formAlert(form.notice.kind, form.notice.text) : ""}
       ${hiddenTokens(v)}
       ${field(v, { name: "name", label: v.t("form.name"), required: true, max: 80, value: val.name, error: e.name, autocomplete: "name" })}
       ${field(v, { name: "body", label: v.t("comments.text"), type: "textarea", required: true, max: 2000, value: val.body, error: e.body })}
       <button class="btn btn--primary" type="submit" data-loading-text="${v.t("form.sending")}">${v.t("comments.submit")}</button>
-    </form>
+    </form>`}
   </section>`;
 }

@@ -12,6 +12,7 @@
     "dev": "node --disable-warning=ExperimentalWarning --watch src/server.ts",
     "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "reset-db": "node --disable-warning=ExperimentalWarning src/db/reset.ts"
+    "reset-db": "node --disable-warning=ExperimentalWarning src/db/reset.ts",
+    "export": "node --disable-warning=ExperimentalWarning scripts/export-static.ts"
   }
 }
