@@ -1,0 +1,17 @@
+{
+  "name": "school91-astana",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Официальный сайт школы №91 г. Астаны — трёхъязычный сайт с CMS (Node.js + SQLite, без внешних зависимостей)",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.ts",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "reset-db": "node --disable-warning=ExperimentalWarning src/db/reset.ts"
+  }
+}
