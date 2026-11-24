@@ -19,7 +19,7 @@ export function sectionView(v: View, section: SiteSection): SafeHtml {
     html`${pageHero(v, { title: v.l(section.title), lead: v.l(section.lead), crumbs: [{ label: v.l(section.title) }], kicker: v.t("page.sectionPages"), icon: section.icon })}
     <section class="section section--tight">
       <div class="container">
-        <ul class="tile-grid" role="list">
+        ${section.cards ? infoCards(v, section, filled) : html`<ul class="tile-grid" role="list">
           ${section.items.map((it, i) => {
             const key = `${section.slug}/${it.slug}`;
             const status = it.kind === "page" ? (filled.has(key) ? "ok" : "pending") : "link";
@@ -34,10 +34,30 @@ export function sectionView(v: View, section: SiteSection): SafeHtml {
               </a>
             </li>`;
           })}
-        </ul>
+        </ul>`}
       </div>
     </section>`,
   );
+}
+
+function infoCards(v: View, section: SiteSection, filled: Set<string>): SafeHtml {
+  return html`<ul class="info-cards" role="list">
+    ${section.items.map((it, i) => {
+      const key = `${section.slug}/${it.slug}`;
+      const pending = it.kind === "page" && !filled.has(key);
+      return html`<li data-reveal style="--i:${Math.min(i, 8)}">
+        <a class="info-card" href="${itemHref(v, section, it)}">
+          <span class="info-card__icon">${icon(it.icon || section.icon)}</span>
+          <span class="info-card__title">${v.l(it.title)}</span>
+          ${it.lead ? html`<span class="info-card__text">${v.l(it.lead)}</span>` : ""}
+          <span class="info-card__foot">
+            <span class="info-card__more">${v.t("card.open")}${icon("arrowRight", "icon icon-sm")}</span>
+            ${pending ? html`<span class="tile__status">${v.t("tbd")}</span>` : ""}
+          </span>
+        </a>
+      </li>`;
+    })}
+  </ul>`;
 }
 
 function sideNav(v: View, section: SiteSection, current: string): SafeHtml {

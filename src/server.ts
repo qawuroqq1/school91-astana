@@ -46,7 +46,8 @@ function serveStatic(ctx: Ctx, baseDir: string, urlPath: string, immutable: bool
   res.setHeader("X-Content-Type-Options", "nosniff");
   if (baseDir === config.uploadsDir && !/^image\//.test(type)) {
     // Documents open in the browser but can never run as a page of the site.
-    res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
+    // PDFs skip "sandbox" because browsers refuse to show a sandboxed PDF in the built-in viewer.
+    res.setHeader("Content-Security-Policy", type === "application/pdf" ? "default-src 'none'; frame-ancestors 'self'" : "default-src 'none'; sandbox");
   }
   if (ctx.req.headers["if-none-match"] === etag) {
     res.statusCode = 304;

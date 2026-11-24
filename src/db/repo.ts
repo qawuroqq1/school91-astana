@@ -2,6 +2,7 @@ import { db } from "./index.ts";
 import { LANGS, parseL10n, type L10n, type Lang } from "../i18n/langs.ts";
 import { setOverrides } from "../i18n/index.ts";
 import type { Dict } from "../i18n/ru.ts";
+import type { StaffGroup } from "../site/structure.ts";
 
 type Row = Record<string, unknown>;
 const all = <T>(sql: string, ...params: (string | number | null)[]): T[] => db().prepare(sql).all(...params) as T[];
@@ -262,11 +263,12 @@ export interface DocumentRow {
   title: L10n;
   sort: number;
   created_at: string;
+  doc_date: string | null;
 }
 const mapDoc = (r: Row): DocumentRow => ({ ...(r as unknown as DocumentRow), title: parseL10n(r.title as string) });
 
 export const documents = {
-  forPage: (key: string) => all<Row>("SELECT * FROM documents WHERE page_key = ? ORDER BY sort, id DESC", key).map(mapDoc),
+  forPage: (key: string) => all<Row>("SELECT * FROM documents WHERE page_key = ? ORDER BY sort, COALESCE(doc_date, created_at) DESC, id DESC", key).map(mapDoc),
   all: () => all<Row>("SELECT * FROM documents ORDER BY page_key, sort, id DESC").map(mapDoc),
   byId: (id: number) => {
     const r = get<Row>("SELECT * FROM documents WHERE id = ?", id);
@@ -275,12 +277,12 @@ export const documents = {
   create: (d: Omit<DocumentRow, "id" | "created_at">) =>
     Number(
       run(
-        "INSERT INTO documents (page_key, file, original_name, mime, size, doc_lang, title, sort) VALUES (?,?,?,?,?,?,?,?)",
-        d.page_key, d.file, d.original_name, d.mime, d.size, d.doc_lang, JSON.stringify(d.title), d.sort,
+        "INSERT INTO documents (page_key, file, original_name, mime, size, doc_lang, title, sort, doc_date) VALUES (?,?,?,?,?,?,?,?,?)",
+        d.page_key, d.file, d.original_name, d.mime, d.size, d.doc_lang, JSON.stringify(d.title), d.sort, d.doc_date,
       ).lastInsertRowid,
     ),
-  update: (id: number, d: { page_key: string; doc_lang: string; title: L10n; sort: number }) =>
-    run("UPDATE documents SET page_key=?, doc_lang=?, title=?, sort=? WHERE id=?", d.page_key, d.doc_lang, JSON.stringify(d.title), d.sort, id),
+  update: (id: number, d: { page_key: string; doc_lang: string; title: L10n; sort: number; doc_date: string | null }) =>
+    run("UPDATE documents SET page_key=?, doc_lang=?, title=?, sort=?, doc_date=? WHERE id=?", d.page_key, d.doc_lang, JSON.stringify(d.title), d.sort, d.doc_date, id),
   remove: (id: number) => run("DELETE FROM documents WHERE id = ?", id),
   count: () => get<{ n: number }>("SELECT COUNT(*) n FROM documents")!.n,
 };
@@ -289,7 +291,7 @@ export const documents = {
 
 export interface StaffRow {
   id: number;
-  grp: "director" | "administration" | "teachers";
+  grp: StaffGroup;
   name: L10n;
   position: L10n;
   bio: L10n;
@@ -307,7 +309,7 @@ const mapStaff = (r: Row): StaffRow => ({
 
 export const staff = {
   byGroup: (grp: string) => all<Row>("SELECT * FROM staff WHERE grp = ? ORDER BY sort, id", grp).map(mapStaff),
-  all: () => all<Row>("SELECT * FROM staff ORDER BY CASE grp WHEN 'director' THEN 0 WHEN 'administration' THEN 1 ELSE 2 END, sort, id").map(mapStaff),
+  all: () => all<Row>("SELECT * FROM staff ORDER BY CASE grp WHEN 'director' THEN 0 WHEN 'administration' THEN 1 WHEN 'teachers' THEN 2 WHEN 'profcom_chair' THEN 3 ELSE 4 END, sort, id").map(mapStaff),
   byId: (id: number) => {
     const r = get<Row>("SELECT * FROM staff WHERE id = ?", id);
     return r ? mapStaff(r) : undefined;

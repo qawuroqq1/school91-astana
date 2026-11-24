@@ -169,6 +169,23 @@ const MIGRATIONS: string[] = [
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   `,
+  /* 2: trade-union staff groups, document dates */ `
+  CREATE TABLE staff_new (
+    id INTEGER PRIMARY KEY,
+    grp TEXT NOT NULL CHECK (grp IN ('director','administration','teachers','profcom_chair','profcom')),
+    name TEXT NOT NULL,
+    position TEXT NOT NULL DEFAULT '{}',
+    bio TEXT NOT NULL DEFAULT '{}',
+    photo TEXT,
+    email TEXT,
+    phone TEXT,
+    sort INTEGER NOT NULL DEFAULT 0
+  );
+  INSERT INTO staff_new SELECT id, grp, name, position, bio, photo, email, phone, sort FROM staff;
+  DROP TABLE staff;
+  ALTER TABLE staff_new RENAME TO staff;
+  ALTER TABLE documents ADD COLUMN doc_date TEXT;
+  `,
 ];
 
 function migrate(db: DatabaseSync): void {

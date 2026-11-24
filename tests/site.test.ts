@@ -311,6 +311,65 @@ test("admin: login, CSRF, news with image, publication, moderation, roles", asyn
   assert.equal((await admin.req("/admin")).status, 303);
 });
 
+test("menu: «О школе» without gallery, «Профком» between budget and official", async () => {
+  const c = new Client();
+  const { text } = await c.get("/ru");
+  const nav = /<nav class="main-nav"[\s\S]*?<\/nav>/.exec(text)![0];
+  const order = [...nav.matchAll(/class="main-nav__link[^"]*" href="\/ru\/([a-z-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ["about", "students", "parents", "teachers", "upbringing", "budget", "profcom", "official", "news"]);
+  const about = /id="mega-about"[\s\S]*?<\/ul>/.exec(nav)![0];
+  assert.doesNotMatch(about, /gallery|Фотогалерея/);
+  for (const t of ["Педагогический совет", "Согласительная комиссия", "Совет по педагогической этике", "Попечительский совет", "История школы", "Школьная форма"]) assert.match(about, new RegExp(t));
+  const profcom = /id="mega-profcom"[\s\S]*?<\/ul>/.exec(nav)![0];
+  for (const slug of ["chairman", "members", "agreement", "acts", "join", "contacts"]) assert.match(profcom, new RegExp(`/ru/profcom/${slug}"`));
+  for (const lang of ["kz", "ru", "en"]) {
+    for (const slug of ["", "/chairman", "/members", "/agreement", "/acts", "/join", "/contacts"]) {
+      const r = await c.get(`/${lang}/profcom${slug}`);
+      assert.equal(r.res.status, 200, `/${lang}/profcom${slug}`);
+      assert.match(r.text, /theme-profcom/);
+    }
+  }
+  assert.equal((await c.get("/ru/about/gallery")).res.status, 404);
+  assert.equal((await c.get("/ru/gallery")).res.status, 200, "gallery page itself is kept");
+});
+
+test("profcom: join application lands in admin inbox; acts catalog shows uploaded documents", async () => {
+  const c = new Client();
+  const page = await c.get("/ru/profcom/join");
+  const r = await c.post("/ru/profcom/join", { _token: tokenOf(page.text, "_token"), _ts: String(Date.now() - 5000), name: "Гульнара", email: "g@example.kz", position: "Учитель математики", message: "", consent: "1" });
+  assert.equal(r.res.status, 200);
+  assert.match(r.text, /Заявка отправлена/);
+
+  const admin = new Client();
+  await admin.post("/admin/login", { email: "admin@test.local", password: "CorrectHorse123" });
+  const inbox = await admin.get("/admin/messages");
+  assert.match(inbox.text, /Гульнара/);
+  assert.match(inbox.text, /Заявка на вступление в профсоюз/);
+
+  const csrf = tokenOf(inbox.text, "_csrf");
+  const pdf = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF");
+  const fd = new FormData();
+  fd.set("_csrf", csrf);
+  fd.set("page_key", "profcom/acts");
+  fd.set("doc_lang", "ru");
+  fd.set("title_ru", "Протокол №1");
+  fd.set("doc_date", "2026-02-03");
+  fd.set("file", new Blob([pdf], { type: "application/pdf" }), "protocol.pdf");
+  assert.equal((await admin.post("/admin/documents?back=/admin/documents", fd)).res.status, 303);
+  const acts = await c.get("/ru/profcom/acts");
+  assert.match(acts.text, /Протокол №1/);
+  assert.match(acts.text, /datetime="2026-02-03"/);
+  const file = /href="(\/uploads\/[^"]+\.pdf)"/.exec(acts.text)![1];
+  const fr = await c.req(file);
+  assert.equal(fr.headers.get("content-type"), "application/pdf");
+  assert.doesNotMatch(fr.headers.get("content-security-policy") || "", /sandbox/);
+
+  // Chair added through the staff manager appears on the chair page.
+  const st = await admin.post("/admin/staff/new", { _csrf: csrf, grp: "profcom_chair", name_ru: "Тест Председатель", position_ru: "Председатель", sort: "0" });
+  assert.equal(st.res.status, 303);
+  assert.match((await c.get("/ru/profcom/chairman")).text, /Тест Председатель/);
+});
+
 test("uploads reject disguised files", async () => {
   const { storeUpload, UploadError } = await import("../src/lib/uploads.ts");
   assert.throws(() => storeUpload({ field: "f", filename: "evil.png", contentType: "image/png", data: Buffer.from("<script>") }, "image"), UploadError);

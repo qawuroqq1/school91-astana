@@ -319,6 +319,45 @@
     }
   }
 
+  // Keep the current page visible in horizontally scrolling sub-navigation.
+  $$(".pk-tabs [aria-current]").forEach((a) => {
+    const list = a.closest("ul");
+    if (list && list.scrollWidth > list.clientWidth) list.scrollLeft = a.offsetLeft - (list.clientWidth - a.offsetWidth) / 2;
+  });
+
+  /* ----------------------------------------- document catalog filters */
+  $$("[data-catalog]").forEach((cat) => {
+    const search = $("[data-catalog-search]", cat);
+    const yearBtns = $$("[data-catalog-year]", cat);
+    const count = $("[data-catalog-count]", cat);
+    const none = $("[data-catalog-none]", cat);
+    const rows = $$(".pk-act", cat);
+    if (!search && !yearBtns.length) return;
+    let year = "";
+    const apply = () => {
+      const q = (search?.value || "").trim().toLocaleLowerCase();
+      let shown = 0;
+      for (const r of rows) {
+        const ok = (!year || r.dataset.year === year) && (!q || r.dataset.text.includes(q));
+        r.hidden = !ok;
+        if (ok) {
+          shown++;
+          r.classList.add("is-in");
+        }
+      }
+      if (count) count.textContent = count.dataset.template.replace("{n}", shown);
+      if (none) none.hidden = shown > 0;
+    };
+    search?.addEventListener("input", apply);
+    yearBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        year = b.dataset.catalogYear;
+        yearBtns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        apply();
+      }),
+    );
+  });
+
   /* --------------------------------------------------------- lightbox */
   const labels = document.body.dataset;
   function lightbox(links, index) {

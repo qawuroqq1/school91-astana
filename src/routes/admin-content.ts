@@ -11,7 +11,9 @@ import { csrf, deleteButton, emptyRow, input, langDots, langTabs, l10nInputs, re
 import { adminCtx, flashRedirect, idParam, int, post, render } from "./admin-kit.ts";
 
 const CAT_LABEL: Record<string, string> = { news: "Новости", events: "Мероприятия", announcements: "Объявления", achievements: "Достижения" };
-const GROUP_LABEL: Record<string, string> = { director: "Директор", administration: "Администрация", teachers: "Педагоги" };
+const GROUP_LABEL: Record<string, string> = { director: "Директор", administration: "Администрация", teachers: "Педагоги", profcom_chair: "Председатель профкома", profcom: "Члены профкома" };
+const GROUP_OPTIONS: [string, string][] = Object.entries(GROUP_LABEL);
+const isoDateOrNull = (v: string | undefined) => (/^\d{4}-\d{2}-\d{2}$/.test(v || "") ? v! : null);
 
 function pageKeyOptions(): [string, string][] {
   return cmsPageKeys().map(({ key, section, item }) => [key, `${section.title.ru} → ${item.title.ru}`]);
@@ -252,6 +254,7 @@ function docUploadForm(a: ReturnType<typeof adminCtx>, pageKey: string | null, b
       ${select("doc_lang", "Язык документа", "ru", LANGS.map((l) => [l, LANG_META[l].label] as [string, string]), { hint: "Если перевода нет — не создавайте фиктивный: посетитель увидит пометку о языке оригинала." })}
     </div>
     ${l10nInputs("title", "Название документа (на языках, где он доступен)", {})}
+    ${input("doc_date", "Дата документа (необязательно; например, дата приказа или протокола)", "", { type: "date" })}
     <label class="a-field"><span>Файлы (PDF, DOC/DOCX, XLS/XLSX, PPT, JPG/PNG…) — можно несколько</span><input type="file" name="file" multiple required /></label>
     <button class="a-btn a-btn--primary" type="submit">${icon("download", "icon icon-sm")} Загрузить</button>
   </form>`;
@@ -276,7 +279,7 @@ async function uploadDocs(ctx: Ctx): Promise<void> {
     for (const file of files) {
       const st = storeUpload(file, "document");
       const title: L10n = Object.keys(baseTitle).length && files.length === 1 ? baseTitle : { [lang]: st.original.replace(/\.[^.]+$/, "") };
-      documents.create({ page_key: key, file: st.file, original_name: st.original, mime: st.mime, size: st.size, doc_lang: lang, title, sort: 0 });
+      documents.create({ page_key: key, file: st.file, original_name: st.original, mime: st.mime, size: st.size, doc_lang: lang, title, sort: 0, doc_date: isoDateOrNull(f.doc_date) });
       audit(user.id, "загрузил документ", st.original);
     }
     flashRedirect(ctx, back, files.length > 1 ? `Загружено файлов: ${files.length}` : "Документ загружен");
@@ -299,7 +302,7 @@ function documentForm(ctx: Ctx, id: number): void {
       <p>Файл: <a href="${d.file}" target="_blank" rel="noopener">${d.original_name}</a> (${humanSize(d.size)})</p>
       <div class="a-row">${select("page_key", "Страница", d.page_key, pageKeyOptions())}${select("doc_lang", "Язык документа", d.doc_lang, LANGS.map((l) => [l, LANG_META[l].label] as [string, string]))}</div>
       ${l10nInputs("title", "Название", d.title)}
-      ${input("sort", "Порядок (меньше — выше)", d.sort, { type: "number" })}
+      <div class="a-row">${input("doc_date", "Дата документа", d.doc_date || "", { type: "date" })}${input("sort", "Порядок (меньше — выше)", d.sort, { type: "number" })}</div>
       <div class="a-form__foot"><button class="a-btn a-btn--primary" type="submit">Сохранить</button><a class="a-btn a-btn--ghost" href="${back}">Назад</a></div>
     </form>`,
   );
@@ -312,7 +315,7 @@ function staffList(ctx: Ctx): void {
   const rows = staff.all();
   render(
     ctx, a, "Сотрудники",
-    html`<section class="a-card"><p class="a-muted">Используется на страницах «Директор школы», «Администрация» и «Педагогический состав». Добавляйте только реальные данные сотрудников с их согласия.</p>
+    html`<section class="a-card"><p class="a-muted">Используется на страницах «Директор школы», «Администрация», «Педагогический состав», «Председатель профкома» и «Члены профкома». Добавляйте только реальные данные сотрудников с их согласия.</p>
       <div class="a-table-wrap"><table class="a-table"><thead><tr><th></th><th>ФИО</th><th>Должность</th><th>Группа</th><th>Порядок</th><th></th></tr></thead><tbody>
       ${rows.length
         ? rows.map(
@@ -334,7 +337,7 @@ function staffForm(ctx: Ctx, id?: number): void {
     ctx, a, p ? "Сотрудник" : "Новый сотрудник",
     html`<form class="a-form a-card" method="post" action="/admin/staff/${p ? p.id : "new"}" enctype="multipart/form-data">
       ${csrf(a)}
-      <div class="a-row">${select("grp", "Группа", p?.grp || "teachers", [["director", "Директор"], ["administration", "Администрация"], ["teachers", "Педагоги"]])}${input("sort", "Порядок", p?.sort ?? 0, { type: "number" })}</div>
+      <div class="a-row">${select("grp", "Группа", p?.grp || (ctx.query.get("grp") || "teachers"), GROUP_OPTIONS)}${input("sort", "Порядок", p?.sort ?? 0, { type: "number" })}</div>
       ${l10nInputs("name", "ФИО", p?.name)}
       ${l10nInputs("position", "Должность / предмет", p?.position)}
       ${langTabs("bio", (l) => textarea(`bio_${l}`, "Краткая информация (образование, стаж, достижения)", p?.bio[l], { rows: 6, rich: true }))}
@@ -368,7 +371,7 @@ async function saveStaff(ctx: Ctx, id?: number): Promise<void> {
       removeUpload(photo);
       photo = null;
     }
-    const grp = (["director", "administration", "teachers"].includes(f.grp) ? f.grp : "teachers") as StaffRow["grp"];
+    const grp = (f.grp in GROUP_LABEL ? f.grp : "teachers") as StaffRow["grp"];
     const saved = staff.save({ id, grp, name, position: readL10n(f, "position"), bio, photo, email: (f.email || "").trim() || null, phone: (f.phone || "").trim() || null, sort: int(f.sort) });
     audit(user.id, id ? "изменил сотрудника" : "добавил сотрудника", name.ru || name.kz || "");
     flashRedirect(ctx, `/admin/staff/${saved}`, "Сохранено");
@@ -585,6 +588,7 @@ export function contentRoutes(r: Router): void {
       doc_lang: LANGS.includes(f.doc_lang as Lang) ? f.doc_lang : d.doc_lang,
       title: readL10n(f, "title"),
       sort: int(f.sort),
+      doc_date: isoDateOrNull(f.doc_date),
     });
     audit(user.id, "изменил документ", d.original_name);
     flashRedirect(ctx, safeBack(ctx.query.get("back"), "/admin/documents"), "Документ сохранён");

@@ -15,6 +15,7 @@ import { homeView } from "../views/public/home.ts";
 import { errorView, pageView, sectionView, sitemapView } from "../views/public/content.ts";
 import { newsArchiveView, newsItemView, newsListView, type CommentFormState } from "../views/public/news.ts";
 import { blogView, contactsView, galleryView, searchView, type FormState, type SearchHit } from "../views/public/forms.ts";
+import { profcomIndexView, profcomPageView } from "../views/public/profcom.ts";
 
 const PER_PAGE = 9;
 const formLimiter = new RateLimiter(5, 10 * 60 * 1000);
@@ -87,7 +88,7 @@ async function validate(ctx: Ctx, lang: Lang, rules: Rule[], needConsent: boolea
   return { ok: true, values };
 }
 
-function toFormState(lang: Lang, r: Validated, successKey: "form.success" | "blog.success" | "comments.moderation"): FormState {
+function toFormState(lang: Lang, r: Validated, successKey: "form.success" | "blog.success" | "comments.moderation" | "pk.join.success"): FormState {
   if (r.ok || r.notice === "__spam__") return { notice: { kind: "success", text: t(lang, successKey) } };
   return { values: r.values, errors: r.errors, notice: r.notice ? { kind: "error", text: r.notice } : undefined };
 }
@@ -341,6 +342,30 @@ export function publicRoutes(r: Router): void {
     renderNews(ctx, lang, p.slug, toFormState(lang, res, "comments.moderation"), res.ok || res.notice === "__spam__" ? 200 : 422);
   });
 
+  /* trade union: application form */
+  r.post("/:lang/profcom/join", async (ctx, p) => {
+    const lang = langOf(p);
+    const found = findItem("profcom", "join")!;
+    const res = await validate(
+      ctx, lang,
+      [
+        { name: "name", required: true, max: 120 },
+        { name: "email", required: true, max: 160, email: true },
+        { name: "phone", max: 40 },
+        { name: "position", max: 160 },
+        { name: "message", max: 3000 },
+      ],
+      true, formLimiter,
+    );
+    if (res.ok) {
+      const f = res.values;
+      const body = [f.position ? `Должность: ${f.position}` : "", f.message].filter(Boolean).join("\n\n") || "—";
+      messages.create({ name: f.name, email: f.email, phone: f.phone, subject: "Заявка на вступление в профсоюз", body, lang, ip: ctx.ip });
+      notify(`🤝 Заявка на вступление в профсоюз\nОт: ${f.name} <${f.email}>${f.phone ? `\nТел.: ${f.phone}` : ""}${f.position ? `\nДолжность: ${f.position}` : ""}`);
+    }
+    page(ctx, profcomPageView(view(ctx, lang, "/profcom/join"), found.section, found.item, toFormState(lang, res, "pk.join.success")), res.ok || res.notice === "__spam__" ? 200 : 422);
+  });
+
   /* sections and pages (keep last: they match generic paths) */
   r.get("/:lang/:section", (ctx, p) => {
     const lang = langOf(p);
@@ -349,13 +374,15 @@ export function publicRoutes(r: Router): void {
       if (section?.slug === "news") return redirect(ctx, `/${lang}/news`, 301);
       throw new HttpError(404);
     }
-    page(ctx, sectionView(view(ctx, lang, `/${section.slug}`), section));
+    const v = view(ctx, lang, `/${section.slug}`);
+    page(ctx, section.slug === "profcom" ? profcomIndexView(v, section) : sectionView(v, section));
   });
   r.get("/:lang/:section/:item", (ctx, p) => {
     const lang = langOf(p);
     const found = findItem(p.section, p.item);
     if (!found) throw new HttpError(404);
     if (found.item.kind === "link") return redirect(ctx, `/${lang}/${found.item.href}`, 302);
-    page(ctx, pageView(view(ctx, lang, `/${p.section}/${p.item}`), found.section, found.item));
+    const v = view(ctx, lang, `/${p.section}/${p.item}`);
+    page(ctx, found.section.slug === "profcom" ? profcomPageView(v, found.section, found.item) : pageView(v, found.section, found.item));
   });
 }

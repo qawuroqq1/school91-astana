@@ -158,7 +158,7 @@ const SECURITY_HEADERS: Record<string, string> = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https:",
-    "frame-src https://www.openstreetmap.org https://www.youtube-nocookie.com https://www.youtube.com",
+    "frame-src 'self' https://www.openstreetmap.org https://www.youtube-nocookie.com https://www.youtube.com",
     "connect-src 'self'",
     "form-action 'self'",
     "base-uri 'self'",

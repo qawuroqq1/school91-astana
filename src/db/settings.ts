@@ -31,6 +31,10 @@ export interface Settings {
   gis2Url: string;
   heroImage: string;
   logo: string;
+  profcomPhone: string;
+  profcomEmail: string;
+  profcomRoom: L10n;
+  profcomHours: L10n;
   stats: Stat[];
   usefulLinks: UsefulLink[];
   analyticsId: string;
@@ -64,6 +68,10 @@ export const DEFAULT_SETTINGS: Settings = {
   gis2Url: "",
   heroImage: "",
   logo: "",
+  profcomPhone: "",
+  profcomEmail: "",
+  profcomRoom: {},
+  profcomHours: {},
   stats: [],
   usefulLinks: [
     { title: { kz: "Электрондық үкімет", ru: "Электронное правительство", en: "eGov Kazakhstan" }, url: "https://egov.kz" },

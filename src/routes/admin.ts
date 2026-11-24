@@ -112,6 +112,12 @@ function settingsPage(ctx: Ctx): void {
         <div class="a-row">${input("mapLat", "Широта (карта)", s.mapLat, { placeholder: "51.1282" })}${input("mapLng", "Долгота (карта)", s.mapLng, { placeholder: "71.4306" })}</div>
         ${input("gis2Url", "Ссылка на организацию в 2GIS", s.gis2Url, { type: "url" })}
       </section>
+      <section class="a-card"><h2>Контакты профкома</h2>
+        <p class="a-muted">Показываются на странице «Профком → Контакты профкома». Пустые поля — «Уточняется».</p>
+        <div class="a-row">${input("profcomPhone", "Телефон профкома", s.profcomPhone)}${input("profcomEmail", "Эл. почта профкома", s.profcomEmail, { type: "email" })}</div>
+        ${l10nInputs("profcomRoom", "Где найти (кабинет, этаж)", s.profcomRoom)}
+        ${l10nInputs("profcomHours", "Часы приёма", s.profcomHours)}
+      </section>
       <section class="a-card"><h2>Социальные сети</h2>
         <div class="a-row">${input("instagram", "Instagram", s.instagram, { type: "url" })}${input("facebook", "Facebook", s.facebook, { type: "url" })}</div>
         <div class="a-row">${input("youtube", "YouTube", s.youtube, { type: "url" })}${input("telegram", "Telegram", s.telegram, { type: "url" })}</div>
@@ -138,8 +144,8 @@ async function saveSettingsHandler(ctx: Ctx): Promise<void> {
   const { user, f, body } = await post(ctx, "admin");
   const s = getSettings();
   const patch: Partial<Settings> = {};
-  for (const k of ["schoolName", "shortName", "slogan", "heroText", "aboutText", "address", "hours"] as const) patch[k] = readL10n(f, k);
-  for (const k of ["phone", "email", "instagram", "facebook", "youtube", "telegram", "mapLat", "mapLng", "gis2Url"] as const) patch[k] = (f[k] || "").trim();
+  for (const k of ["schoolName", "shortName", "slogan", "heroText", "aboutText", "address", "hours", "profcomRoom", "profcomHours"] as const) patch[k] = readL10n(f, k);
+  for (const k of ["phone", "email", "instagram", "facebook", "youtube", "telegram", "mapLat", "mapLng", "gis2Url", "profcomPhone", "profcomEmail"] as const) patch[k] = (f[k] || "").trim();
   for (const k of ["mapLat", "mapLng"] as const) if (patch[k] && !Number.isFinite(Number(patch[k]))) patch[k] = "";
   const stats: Stat[] = [];
   for (let i = 0; i < 12; i++) {
