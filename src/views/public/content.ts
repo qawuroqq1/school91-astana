@@ -19,22 +19,7 @@ export function sectionView(v: View, section: SiteSection): SafeHtml {
     html`${pageHero(v, { title: v.l(section.title), lead: v.l(section.lead), crumbs: [{ label: v.l(section.title) }], kicker: v.t("page.sectionPages"), icon: section.icon })}
     <section class="section section--tight">
       <div class="container">
-        ${section.cards ? infoCards(v, section, filled) : html`<ul class="tile-grid" role="list">
-          ${section.items.map((it, i) => {
-            const key = `${section.slug}/${it.slug}`;
-            const status = it.kind === "page" ? (filled.has(key) ? "ok" : "pending") : "link";
-            return html`<li data-reveal style="--i:${i}">
-              <a class="tile" href="${itemHref(v, section, it)}">
-                <span class="tile__num">${String(i + 1).padStart(2, "0")}</span>
-                <span class="tile__title">${v.l(it.title)}</span>
-                <span class="tile__foot">
-                  ${status === "pending" ? html`<span class="tile__status">${v.t("tbd")}</span>` : html`<span></span>`}
-                  ${icon(it.kind === "link" ? "arrowUpRight" : "arrowRight", "icon icon-sm")}
-                </span>
-              </a>
-            </li>`;
-          })}
-        </ul>`}
+        ${infoCards(v, section, filled)}
       </div>
     </section>`,
   );

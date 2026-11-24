@@ -250,7 +250,7 @@ ${opts.noindex ? html`<meta name="robots" content="noindex" />` : ""}
 <link rel="stylesheet" href="/css/site.css?v=${ASSET_V}" />
 <script src="/js/site.js?v=${ASSET_V}" defer></script>
 </head>
-<body class="${opts.bodyClass || ""}" data-lang="${v.lang}"${config.staticExport ? raw(` data-static-base="${process.env.STATIC_BASE || ""}"`) : ""} data-lb-close="${v.t("gallery.close")}" data-lb-prev="${v.t("gallery.prev")}" data-lb-next="${v.t("gallery.next")}">
+<body class="${[opts.bodyClass, opts.active ? `sec-${opts.active}` : ""].filter(Boolean).join(" ")}" data-lang="${v.lang}"${config.staticExport ? raw(` data-static-base="${process.env.STATIC_BASE || ""}"`) : ""} data-lb-close="${v.t("gallery.close")}" data-lb-prev="${v.t("gallery.prev")}" data-lb-next="${v.t("gallery.next")}">
 <a class="skip-link" href="#main">${v.t("skip")}</a>
 ${header(v, langs, opts.active)}
 <main id="main" tabindex="-1">
@@ -285,6 +285,7 @@ export function breadcrumbs(v: View, items: Crumb[]): SafeHtml {
 export function pageHero(v: View, opts: { title: string; lead?: string; crumbs: Crumb[]; kicker?: string; icon?: string }): SafeHtml {
   return html`<section class="page-hero">
     <div class="page-hero__bg" aria-hidden="true"></div>
+    ${sunDecor("page-hero__sun")}
     <div class="container page-hero__inner">
       ${breadcrumbs(v, opts.crumbs)}
       ${opts.kicker ? html`<p class="kicker kicker--light rise" style="--d:0">${opts.icon ? icon(opts.icon, "icon icon-sm") : ""}${opts.kicker}</p>` : ""}
@@ -292,6 +293,16 @@ export function pageHero(v: View, opts: { title: string; lead?: string; crumbs: 
       ${opts.lead ? html`<p class="page-hero__lead rise" style="--d:4">${opts.lead}</p>` : ""}
     </div>
   </section>`;
+}
+
+/** Sun with rays (from the national flag): the bright theme's signature shape. */
+export function sunDecor(cls: string): SafeHtml {
+  const rays = Array.from({ length: 32 }, (_, i) => {
+    const a = (i / 32) * Math.PI * 2;
+    const r1 = 74, r2 = i % 2 ? 112 : 128;
+    return `<path d="M${(150 + Math.cos(a) * r1).toFixed(1)} ${(150 + Math.sin(a) * r1).toFixed(1)}L${(150 + Math.cos(a) * r2).toFixed(1)} ${(150 + Math.sin(a) * r2).toFixed(1)}"/>`;
+  }).join("");
+  return raw(`<svg class="sun ${cls}" viewBox="0 0 300 300" aria-hidden="true" focusable="false"><circle class="sun__disc" cx="150" cy="150" r="56"/><g class="sun__rays">${rays}</g></svg>`);
 }
 
 /** Wraps each word so titles can be revealed word by word (pure CSS, no layout shift). */

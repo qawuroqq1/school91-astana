@@ -3,7 +3,7 @@ import { monthShort } from "../../i18n/index.ts";
 import { QUICK_LINKS, findItem } from "../../site/structure.ts";
 import { announcements, gallery, news } from "../../db/repo.ts";
 import { icon } from "../icons.ts";
-import { layout, splitWords, emptyState } from "../layout.ts";
+import { layout, splitWords, emptyState, sunDecor } from "../layout.ts";
 import { newsCard, sectionHead, socialPlates } from "./parts.ts";
 import type { View } from "../context.ts";
 
@@ -12,6 +12,7 @@ function hero(v: View): SafeHtml {
   const name = v.l(v.s.shortName);
   const slogan = v.l(v.s.slogan);
   return html`<section class="hero" aria-labelledby="hero-title">
+    ${sunDecor("hero__sun")}
     <div class="hero__grid container">
       <div class="hero__copy">
         <p class="kicker rise" style="--d:0"><span class="dot" aria-hidden="true"></span>${v.t("hero.kicker")}</p>
@@ -45,7 +46,7 @@ function quick(v: View): SafeHtml {
       ${sectionHead(v.t("home.quick.kicker"), v.t("home.quick.title"))}
       <ul class="quick-grid" role="list">
         ${QUICK_LINKS.map(
-          (q, i) => html`<li data-reveal style="--i:${i}">
+          (q, i) => html`<li data-reveal style="--i:${i}" class="hue-${q.href.split("/")[0] === "official" && q.href.includes("services") ? "budget" : q.href.split("/")[0]}">
             <a class="quick-card" href="${v.href(q.href)}">
               <span class="quick-card__icon">${icon(q.icon)}</span>
               <span class="quick-card__title">${v.l(q.title)}</span>
