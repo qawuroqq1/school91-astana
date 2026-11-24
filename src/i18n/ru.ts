@@ -173,6 +173,9 @@ export const ru = {
   "err.search": "Поиск по сайту",
 
   "date.today": "Сегодня",
+  "social.fbGroup": "Группа школы",
+  "social.follow": "Подписаться",
+  "social.soon": "Ссылка скоро появится",
 
   "card.open": "Открыть раздел",
   "pk.sections": "Разделы профкома",

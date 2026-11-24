@@ -1142,3 +1142,33 @@ html.a11y-scheme-high .pk-hero, html.a11y-scheme-inverse .pk-hero, html.a11y-sch
 html.a11y-scheme-high .pk-hero::before, html.a11y-scheme-inverse .pk-hero::before { display: none; }
 html.a11y-scheme-inverse :is(.pk-card, .pk-member, .pk-chair, .pk-doc, .pk-act, .pk-contact, .pk-mini, .pk-join__about, .pk-steps, .pk-pending, .pk-tabs) { background: #000 !important; color: #fff; border: 1px solid #fff; }
 html.a11y-scheme-inverse .pk-page { background: #000; }
+
+/* ------------------------------------------- Instagram / Facebook plates */
+.social-plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.social-plate {
+  display: flex; align-items: center; gap: 0.9rem; height: 100%; padding: 0.95rem 1.1rem;
+  border-radius: 18px; background: #fff; border: 1px solid var(--line); color: var(--ink-900); text-decoration: none;
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), border-color var(--dur);
+}
+a.social-plate:hover, a.social-plate:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow); border-color: transparent; color: var(--ink-900); }
+.social-plate__icon { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 14px; color: #fff; }
+.social-plate__icon .icon { width: 24px; height: 24px; }
+.social-plate--instagram .social-plate__icon { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.social-plate--facebook .social-plate__icon { background: #1877f2; }
+.social-plate__text { display: grid; min-width: 0; flex: 1; }
+.social-plate__name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+.social-plate__handle { font-size: var(--fs-xs); color: var(--ink-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.social-plate__go { display: inline-flex; align-items: center; gap: 0.25rem; flex: none; font-size: var(--fs-xs); font-weight: 600; color: var(--navy-700); }
+.social-plate.is-soon { background: transparent; border-style: dashed; }
+.social-plate.is-soon .social-plate__icon { filter: saturate(0.35); opacity: 0.75; }
+.socials-block { margin-bottom: 2rem; }
+.section--tint .social-plate:not(.is-soon) { border-color: transparent; box-shadow: var(--shadow-sm); }
+.utility .utility__social { width: 26px; height: 26px; padding: 0; justify-content: center; border-radius: 8px; color: #fff; }
+.utility .utility__social--instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.utility .utility__social--facebook { background: #1877f2; }
+.utility .utility__social:hover { opacity: 0.85; color: #fff; }
+.utility__actions .utility__social + .utility__social { margin-left: -0.9rem; }
+@media (max-width: 420px) { .social-plates { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .utility .utility__social { display: none; } }
+html.a11y-scheme-high .social-plate__icon, html.a11y-scheme-inverse .social-plate__icon { background: #000 !important; border: 2px solid currentColor; }
+html.a11y-scheme-inverse .social-plate { background: #000; color: #fff; border-color: #fff; }

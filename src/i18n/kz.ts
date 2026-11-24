@@ -174,6 +174,9 @@ export const kz: Dict = {
   "err.search": "Сайт бойынша іздеу",
 
   "date.today": "Бүгін",
+  "social.fbGroup": "Мектеп тобы",
+  "social.follow": "Жазылу",
+  "social.soon": "Сілтеме жақында қосылады",
 
   "card.open": "Бөлімді ашу",
   "pk.sections": "Кәсіподақ комитетінің бөлімдері",

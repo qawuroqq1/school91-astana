@@ -3,7 +3,7 @@ import { formatDate } from "../../i18n/index.ts";
 import type { BlogRow, ImageRow, AlbumRow } from "../../db/repo.ts";
 import { icon } from "../icons.ts";
 import { layout, pageHero, emptyState, pager } from "../layout.ts";
-import { field, formAlert, hiddenTokens, IS_STATIC, staticFormNotice } from "./parts.ts";
+import { field, formAlert, hiddenTokens, IS_STATIC, staticFormNotice, socialPlates } from "./parts.ts";
 import type { View } from "../context.ts";
 
 export interface FormState {
@@ -39,8 +39,9 @@ export function contactsView(v: View, form: FormState = {}): SafeHtml {
             <li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span>${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : tbd}</div></li>
             <li>${icon("clock")}<div><span class="label">${v.t("contacts.hours")}</span>${v.l(v.s.hours) || tbd}</div></li>
           </ul>
-          ${socials.length
-            ? html`<div data-reveal><p class="label">${v.t("contacts.socials")}</p><div class="socials socials--dark">${socials.map((k) => html`<a href="${v.s[k]}" target="_blank" rel="noopener noreferrer" aria-label="${k}">${icon(k)}</a>`)}</div></div>`
+          <div data-reveal><p class="label">${v.t("contacts.socials")}</p>${socialPlates(v)}</div>
+          ${socials.filter((k) => k === "youtube" || k === "telegram").length
+            ? html`<div class="socials socials--dark" data-reveal>${socials.filter((k) => k === "youtube" || k === "telegram").map((k) => html`<a href="${v.s[k]}" target="_blank" rel="noopener noreferrer" aria-label="${k}">${icon(k)}</a>`)}</div>`
             : ""}
           <div class="map-card" data-reveal>
             ${map

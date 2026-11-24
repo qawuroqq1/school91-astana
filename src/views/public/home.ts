@@ -4,7 +4,7 @@ import { QUICK_LINKS, findItem } from "../../site/structure.ts";
 import { announcements, gallery, news } from "../../db/repo.ts";
 import { icon } from "../icons.ts";
 import { layout, splitWords, emptyState } from "../layout.ts";
-import { newsCard, sectionHead } from "./parts.ts";
+import { newsCard, sectionHead, socialPlates } from "./parts.ts";
 import type { View } from "../context.ts";
 
 function hero(v: View): SafeHtml {
@@ -153,6 +153,10 @@ function linksAndContacts(v: View): SafeHtml {
           <li>${icon("phone")}<div><span class="label">${v.t("contacts.phone")}</span>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
           <li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span>${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
         </ul>
+        <div class="socials-block" data-reveal>
+          <h3 class="useful__title">${v.t("contacts.socials")}</h3>
+          ${socialPlates(v)}
+        </div>
         <div class="useful" data-reveal>
           <h3 class="useful__title">${v.t("home.links.title")}</h3>
           <ul>

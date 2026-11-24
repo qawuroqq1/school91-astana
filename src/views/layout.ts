@@ -141,6 +141,7 @@ function header(v: View, langs: Lang[], active?: string): SafeHtml {
           ${!v.s.phone && !v.s.email ? html`<a href="${v.href("contacts")}">${icon("mapPin", "icon icon-xs")}<span>${v.t("nav.contacts")}</span></a>` : ""}
         </div>
         <div class="utility__actions">
+          ${(["instagram", "facebook"] as const).filter((k) => v.s[k]).map((k) => html`<a href="${v.s[k]}" class="utility__social utility__social--${k}" target="_blank" rel="noopener noreferrer" aria-label="${k === "instagram" ? "Instagram" : "Facebook"}">${icon(k, "icon icon-xs")}</a>`)}
           <a href="${v.href("director-blog")}" class="utility__link">${icon("message", "icon icon-xs")}<span>${v.t("nav.blog")}</span></a>
           <button type="button" class="utility__link" data-a11y-toggle aria-controls="a11y-panel" aria-expanded="${String(v.a11y.on)}">${icon("glasses", "icon icon-xs")}<span>${v.t("a11y.title")}</span></button>
           ${langSwitcher(v, langs, "lang-switch")}

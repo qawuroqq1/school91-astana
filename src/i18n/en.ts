@@ -174,6 +174,9 @@ export const en: Dict = {
   "err.search": "Search the site",
 
   "date.today": "Today",
+  "social.fbGroup": "School group",
+  "social.follow": "Follow",
+  "social.soon": "Link coming soon",
 
   "card.open": "Open section",
   "pk.sections": "Union sections",

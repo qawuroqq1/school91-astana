@@ -97,6 +97,35 @@ export function hiddenTokens(v: View): SafeHtml {
   return html`<input type="hidden" name="_token" value="${v.formToken}" /><div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div><input type="hidden" name="_ts" value="${Date.now()}" />`;
 }
 
+/** Instagram / Facebook as large plates. Without a link they show an honest "coming soon" state. */
+export function socialPlates(v: View, cls = ""): SafeHtml {
+  const nets = [
+    { key: "instagram" as const, name: "Instagram" },
+    { key: "facebook" as const, name: "Facebook" },
+  ];
+  const handle = (url: string) => {
+    try {
+      const parts = new URL(url).pathname.split("/").filter(Boolean);
+      if (parts[0] === "groups") return v.t("social.fbGroup");
+      const seg = parts[0];
+      return seg ? `@${seg}` : new URL(url).host;
+    } catch {
+      return url;
+    }
+  };
+  return html`<ul class="social-plates ${cls}" role="list">
+    ${nets.map(({ key, name }) => {
+      const url = v.s[key];
+      const inner = html`<span class="social-plate__icon">${icon(key)}</span>
+        <span class="social-plate__text"><span class="social-plate__name">${name}</span><span class="social-plate__handle">${url ? handle(url) : v.t("social.soon")}</span></span>
+        ${url ? html`<span class="social-plate__go">${v.t("social.follow")}${icon("arrowUpRight", "icon icon-sm")}</span>` : ""}`;
+      return html`<li>${url
+        ? html`<a class="social-plate social-plate--${key}" href="${url}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+        : html`<div class="social-plate social-plate--${key} is-soon">${inner}</div>`}</li>`;
+    })}
+  </ul>`;
+}
+
 export function staticFormNotice(v: View): SafeHtml {
   return html`<div class="notice" role="note">${icon("info", "icon")}<div><p>${v.t("static.form")}</p>
     <p>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : ""}${v.s.phone && v.s.email ? " · " : ""}${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : ""}</p></div></div>`;
