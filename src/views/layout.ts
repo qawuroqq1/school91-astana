@@ -4,6 +4,9 @@ import { SECTIONS } from "../site/structure.ts";
 import { announcements } from "../db/repo.ts";
 import { icon } from "./icons.ts";
 import { config } from "../config.ts";
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
 import type { Crumb, View } from "./context.ts";
 
 export interface LayoutOpts {
@@ -20,7 +23,13 @@ export interface LayoutOpts {
   status?: number;
 }
 
-const ASSET_V = "20261127";
+/** Cache-busting version: changes whenever the stylesheet or script changes. */
+const ASSET_V = crypto
+  .createHash("sha1")
+  .update(fs.readFileSync(path.join(config.publicDir, "css/site.css")))
+  .update(fs.readFileSync(path.join(config.publicDir, "js/site.js")))
+  .digest("hex")
+  .slice(0, 10);
 
 function logo(v: View): SafeHtml {
   const src = v.s.logo || "/img/logo.svg";
