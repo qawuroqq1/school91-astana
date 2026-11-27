@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://qawuroqq1.github.io/school91-astana/sitemap.xml

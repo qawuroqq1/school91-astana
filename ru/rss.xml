@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Школа-гимназия №91 города Астаны</title>
+<link>https://qawuroqq1.github.io/school91-astana/ru</link>
+<description>Знания, которые открывают будущее</description>
+<language>ru</language>
+<atom:link href="https://qawuroqq1.github.io/school91-astana/ru/rss.xml" rel="self" type="application/rss+xml" />
+<item>
+<title>Запущен новый сайт школы</title>
+<link>https://qawuroqq1.github.io/school91-astana/ru/news/new-website</link>
+<guid isPermaLink="true">https://qawuroqq1.github.io/school91-astana/ru/news/new-website</guid>
+<pubDate>Fri, 27 Nov 2026 09:32:55 GMT</pubDate>
+<category>Новости</category>
+<description>Официальный сайт школы обновлён: три языка, удобная навигация и мобильная версия.</description>
+</item>
+</channel>
+</rss>

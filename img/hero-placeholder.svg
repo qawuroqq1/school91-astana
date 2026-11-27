@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1100" preserveAspectRatio="xMidYMid slice">
+  <!-- Temporary illustration (not a photo of the school). Replace in Admin → Settings. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fb0e6"/>
+      <stop offset="0.55" stop-color="#86d0f3"/>
+      <stop offset="1" stop-color="#d4f0fc"/>
+    </linearGradient>
+    <linearGradient id="facade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f7fa"/>
+      <stop offset="1" stop-color="#d6e1ea"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b9c9d7"/>
+      <stop offset="1" stop-color="#9fb3c5"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fd0d9"/>
+      <stop offset="1" stop-color="#2a6f8f"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3cad66"/>
+      <stop offset="1" stop-color="#22834a"/>
+    </linearGradient>
+    <pattern id="win" width="64" height="58" patternUnits="userSpaceOnUse">
+      <rect x="8" y="8" width="44" height="38" rx="3" fill="url(#glass)" opacity="0.92"/>
+      <rect x="8" y="8" width="44" height="6" fill="#ffffff" opacity="0.25"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="1100" fill="url(#sky)"/>
+  <g fill="#ffffff" opacity="0.45">
+    <rect x="40" y="430" width="90" height="380"/><rect x="140" y="380" width="70" height="430"/><rect x="820" y="400" width="110" height="410"/>
+  </g>
+  <!-- main volume -->
+  <polygon points="150,470 640,420 640,860 150,860" fill="url(#facade)"/>
+  <polygon points="640,420 820,470 820,860 640,860" fill="url(#side)"/>
+  <rect x="190" y="520" width="410" height="290" fill="url(#win)"/>
+  <rect x="660" y="510" width="140" height="300" fill="url(#win)" opacity="0.7"/>
+  <!-- entrance block -->
+  <polygon points="300,620 520,600 520,860 300,860" fill="#0b1f3a"/>
+  <rect x="330" y="680" width="160" height="180" fill="url(#glass)" opacity="0.85"/>
+  <rect x="408" y="680" width="4" height="180" fill="#0b1f3a"/>
+  <polygon points="280,620 540,596 540,612 280,636" fill="#e5a13a"/>
+  <text x="410" y="590" text-anchor="middle" font-family="Manrope, Inter, Arial, sans-serif" font-weight="800" font-size="54" fill="#0b1f3a" letter-spacing="-2">91</text>
+  <!-- flag mast -->
+  <rect x="112" y="330" width="5" height="530" fill="#d6e1ea"/>
+  <path d="M117 336h88v56h-88z" fill="#00aec7"/>
+  <circle cx="161" cy="364" r="12" fill="#f9d548"/>
+  <!-- ground & trees -->
+  <rect y="860" width="960" height="240" fill="url(#ground)"/>
+  <g fill="#1f9a57" opacity="0.95">
+    <ellipse cx="80" cy="830" rx="60" ry="80"/><ellipse cx="880" cy="820" rx="70" ry="95"/><ellipse cx="225" cy="845" rx="44" ry="58"/><ellipse cx="760" cy="848" rx="40" ry="52"/>
+  </g>
+  <g fill="#17673c"><rect x="77" y="880" width="6" height="40"/><rect x="877" y="880" width="6" height="40"/><rect x="222" y="880" width="6" height="30"/><rect x="757" y="880" width="6" height="30"/></g>
+  <path d="M330 1100 400 860h120l90 240z" fill="#ffffff" opacity="0.06"/>
+  <g stroke="#ffffff" stroke-opacity="0.08">
+    <path d="M0 960h960M0 1030h960"/>
+  </g>
+</svg>
