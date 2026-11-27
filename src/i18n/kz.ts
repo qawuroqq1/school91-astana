@@ -27,7 +27,7 @@ export const kz: Dict = {
   "a11y.imagesOff": "Жасыру",
   "a11y.reset": "Сайттың қалыпты нұсқасы",
 
-  "hero.kicker": "Жалпы білім беретін мектеп · Астана",
+  "hero.kicker": "Мектеп-гимназия · Астана",
   "hero.about": "Мектеп туралы",
   "hero.more": "Толығырақ",
   "hero.photoNote": "Уақытша сурет. Мектептің фотосуретімен ауыстырылады.",
@@ -174,6 +174,11 @@ export const kz: Dict = {
   "err.search": "Сайт бойынша іздеу",
 
   "date.today": "Бүгін",
+  "contacts.reception": "Қабылдау бөлмесі",
+  "contacts.desk": "Күзет",
+  "contacts.source": "Байланыс деректері — 2GIS расталған карточкасынан.",
+  "gallery.life": "Мектеп өмірі",
+  "hero.route": "Бағыт құру",
   "social.fbGroup": "Мектеп тобы",
   "social.follow": "Жазылу",
   "social.soon": "Сілтеме жақында қосылады",

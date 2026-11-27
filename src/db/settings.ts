@@ -21,6 +21,7 @@ export interface Settings {
   address: L10n;
   hours: L10n;
   phone: string;
+  phone2: string;
   email: string;
   instagram: string;
   facebook: string;
@@ -42,8 +43,8 @@ export interface Settings {
 
 /** Defaults hold no invented facts: unknown contacts are empty and render as "уточняется". */
 export const DEFAULT_SETTINGS: Settings = {
-  schoolName: { kz: "Астана қаласының №91 мектебі", ru: "Школа №91 города Астаны", en: "School No. 91, Astana" },
-  shortName: { kz: "№91 мектеп", ru: "Школа №91", en: "School No. 91" },
+  schoolName: { kz: "Астана қаласының №91 мектеп-гимназиясы", ru: "Школа-гимназия №91 города Астаны", en: "School-Gymnasium No. 91, Astana" },
+  shortName: { kz: "№91 мектеп-гимназия", ru: "Школа-гимназия №91", en: "School-Gymnasium No. 91" },
   slogan: { kz: "Болашаққа жол ашатын білім", ru: "Знания, которые открывают будущее", en: "Knowledge that opens the future" },
   heroText: {
     kz: "Әр оқушының әлеуетін ашуға, сапалы білім мен адамгершілік құндылықтарды дамытуға ұмтыламыз.",
@@ -51,22 +52,32 @@ export const DEFAULT_SETTINGS: Settings = {
     en: "We strive to unlock every student's potential through quality education and strong values.",
   },
   aboutText: {
-    kz: "№91 мектеп — Астана қаласының жалпы білім беретін мектебі. Бұл сайтта оқу процесі, мектеп өмірі, құжаттар мен ресми ақпарат жарияланады.",
-    ru: "Школа №91 — общеобразовательная школа города Астаны. На этом сайте публикуется информация об учебном процессе, жизни школы, документы и официальная информация.",
-    en: "School No. 91 is a secondary school in Astana. This website publishes information about studies, school life, documents and official information.",
+    kz: "№91 мектеп-гимназия — Астана қаласының Сарайшық ауданындағы білім беру ұйымы. Бұл сайтта оқу процесі, мектеп өмірі, құжаттар мен ресми ақпарат жарияланады.",
+    ru: "Школа-гимназия №91 — образовательное учреждение в районе Сарайшык города Астаны. На этом сайте публикуется информация об учебном процессе, жизни школы, документы и официальная информация.",
+    en: "School-Gymnasium No. 91 is a school in the Saraishyk district of Astana. This website publishes information about studies, school life, documents and official information.",
   },
-  address: {},
-  hours: {},
-  phone: "",
+  // Contacts as listed on the school's verified 2GIS card.
+  address: {
+    kz: "Анатолий Храпатый көшесі, 10, Сарайшық ауданы, Астана",
+    ru: "ул. Анатолия Храпатого, 10, район Сарайшык, Астана",
+    en: "10 Anatoly Khrapaty St, Saraishyk District, Astana",
+  },
+  hours: {
+    kz: "09:00–18:00, түскі үзіліс 13:00–14:00",
+    ru: "09:00–18:00, обед 13:00–14:00",
+    en: "09:00–18:00, lunch 13:00–14:00",
+  },
+  phone: "+7 (7172) 57-60-31",
+  phone2: "+7 (7172) 57-60-36",
   email: "",
   instagram: "https://www.instagram.com/91gymnasium.school",
   facebook: "https://www.facebook.com/groups/4081792368575195",
   youtube: "",
   telegram: "",
-  mapLat: "",
-  mapLng: "",
-  gis2Url: "",
-  heroImage: "",
+  mapLat: "51.113671",
+  mapLng: "71.459348",
+  gis2Url: "https://2gis.kz/astana/firm/70000001054711903",
+  heroImage: "https://i3.photo.2gis.com/images/branch/0/30258560160783628_7091_1920x.jpg",
   logo: "",
   profcomPhone: "",
   profcomEmail: "",

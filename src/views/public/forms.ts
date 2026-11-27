@@ -35,8 +35,8 @@ export function contactsView(v: View, form: FormState = {}): SafeHtml {
         <div class="contact-page__info">
           <ul class="contact-list" data-reveal>
             <li>${icon("mapPin")}<div><span class="label">${v.t("contacts.address")}</span>${v.l(v.s.address) || tbd}</div></li>
-            <li>${icon("phone")}<div><span class="label">${v.t("contacts.phone")}</span>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : tbd}</div></li>
-            <li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span>${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : tbd}</div></li>
+            <li>${icon("phone")}<div><span class="label">${v.t("contacts.phone")}</span>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a> <small class="muted">${v.t("contacts.reception")}</small>` : tbd}${v.s.phone2 ? html`<br /><a href="tel:${v.s.phone2.replace(/[^\d+]/g, "")}">${v.s.phone2}</a> <small class="muted">${v.t("contacts.desk")}</small>` : ""}</div></li>
+            ${v.s.email ? html`<li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span><a href="mailto:${v.s.email}">${v.s.email}</a></div></li>` : ""}
             <li>${icon("clock")}<div><span class="label">${v.t("contacts.hours")}</span>${v.l(v.s.hours) || tbd}</div></li>
           </ul>
           <div data-reveal><p class="label">${v.t("contacts.socials")}</p>${socialPlates(v)}</div>

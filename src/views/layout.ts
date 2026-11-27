@@ -20,7 +20,7 @@ export interface LayoutOpts {
   status?: number;
 }
 
-const ASSET_V = "20261119";
+const ASSET_V = "20261127";
 
 function logo(v: View): SafeHtml {
   const src = v.s.logo || "/img/logo.svg";
@@ -196,7 +196,9 @@ function footer(v: View): SafeHtml {
         <ul class="site-footer__contacts">
           <li>${icon("mapPin", "icon icon-sm")}<span>${v.l(v.s.address) || html`<span class="tbd">${v.t("tbd")}</span>`}</span></li>
           <li>${icon("phone", "icon icon-sm")}${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</li>
-          <li>${icon("mail", "icon icon-sm")}${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</li>
+          ${v.s.phone2 ? html`<li>${icon("phone", "icon icon-sm")}<a href="tel:${v.s.phone2.replace(/[^\d+]/g, "")}">${v.s.phone2}</a></li>` : ""}
+          ${v.s.email ? html`<li>${icon("mail", "icon icon-sm")}<a href="mailto:${v.s.email}">${v.s.email}</a></li>` : ""}
+          <li>${icon("clock", "icon icon-sm")}<span>${v.l(v.s.hours) || html`<span class="tbd">${v.t("tbd")}</span>`}</span></li>
         </ul>
       </div>
     </div>

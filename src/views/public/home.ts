@@ -11,6 +11,10 @@ function hero(v: View): SafeHtml {
   const img = v.s.heroImage;
   const name = v.l(v.s.shortName);
   const slogan = v.l(v.s.slogan);
+  // Two more real photos from the gallery make a small collage around the main one.
+  const extra = gallery.images(undefined, 12).filter((i) => i.file !== img && !img.includes(i.file.replace(/_\d+x\.jpg$/, ""))).slice(-2);
+  const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
+  const gis = v.s.gis2Url || (v.l(v.s.address) ? `https://2gis.kz/astana/search/${encodeURIComponent(v.l(v.s.address))}` : "");
   return html`<section class="hero" aria-labelledby="hero-title">
     ${sunDecor("hero__sun")}
     <div class="hero__grid container">
@@ -23,20 +27,31 @@ function hero(v: View): SafeHtml {
         <p class="hero__text rise" style="--d:6">${v.l(v.s.heroText)}</p>
         <div class="hero__actions rise" style="--d:7">
           <a class="btn btn--primary btn--lg" href="${v.href("about")}" data-magnetic>${v.t("hero.about")} ${icon("arrowRight", "icon icon-sm")}</a>
-          <a class="btn btn--glass btn--lg" href="${v.href("about/history")}">${v.t("hero.more")}</a>
+          <a class="btn btn--glass btn--lg" href="${v.href("contacts")}">${icon("mapPin", "icon icon-sm")} ${v.t("nav.contacts")}</a>
         </div>
       </div>
-      <figure class="hero__media rise" style="--d:3">
+      <figure class="hero__media rise${extra.length === 2 ? " hero__media--collage" : ""}" style="--d:3">
         <div class="hero__frame" data-parallax>
           ${img
             ? html`<img src="${img}" alt="${v.l(v.s.schoolName)}" fetchpriority="high" decoding="async" />`
             : html`<img src="/img/hero-placeholder.svg" alt="" fetchpriority="high" decoding="async" width="960" height="1100" />`}
         </div>
+        ${extra.length === 2
+          ? html`<div class="hero__tile hero__tile--a"><img src="${extra[0].file}" alt="${v.l(extra[0].caption)}" decoding="async" /></div>
+              <div class="hero__tile hero__tile--b"><img src="${extra[1].file}" alt="${v.l(extra[1].caption)}" decoding="async" /></div>`
+          : ""}
         ${img ? "" : html`<figcaption class="hero__note">${icon("info", "icon icon-xs")}${v.t("hero.photoNote")}</figcaption>`}
         <div class="hero__badge" aria-hidden="true"><span>91</span></div>
       </figure>
     </div>
-    <a class="hero__scroll" href="#quick" aria-label="${v.t("hero.scroll")}">${icon("arrowDown", "icon icon-sm")}</a>
+    <div class="container">
+      <ul class="hero-facts rise" style="--d:8" role="list">
+        <li>${icon("mapPin")}<span><small>${v.t("contacts.address")}</small>${v.l(v.s.address) || html`<span class="tbd">${v.t("tbd")}</span>`}</span></li>
+        <li>${icon("phone")}<span><small>${v.t("contacts.reception")}</small>${v.s.phone ? html`<a href="${tel(v.s.phone)}">${v.s.phone}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</span></li>
+        <li>${icon("clock")}<span><small>${v.t("contacts.hours")}</small>${v.l(v.s.hours) || html`<span class="tbd">${v.t("tbd")}</span>`}</span></li>
+        ${gis ? html`<li class="hero-facts__cta"><a class="btn btn--sun" href="${gis}" target="_blank" rel="noopener noreferrer">${icon("mapPin", "icon icon-sm")} ${v.t("hero.route")}</a></li>` : ""}
+      </ul>
+    </div>
   </section>`;
 }
 
@@ -151,8 +166,9 @@ function linksAndContacts(v: View): SafeHtml {
         ${sectionHead(v.t("home.contacts.kicker"), v.t("home.contacts.title"))}
         <ul class="contact-list" data-reveal>
           <li>${icon("mapPin")}<div><span class="label">${v.t("contacts.address")}</span>${v.l(v.s.address) || html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
-          <li>${icon("phone")}<div><span class="label">${v.t("contacts.phone")}</span>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
-          <li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span>${v.s.email ? html`<a href="mailto:${v.s.email}">${v.s.email}</a>` : html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
+          <li>${icon("phone")}<div><span class="label">${v.t("contacts.phone")}</span>${v.s.phone ? html`<a href="tel:${v.s.phone.replace(/[^\d+]/g, "")}">${v.s.phone}</a> <small class="muted">${v.t("contacts.reception")}</small>` : html`<span class="tbd">${v.t("tbd")}</span>`}${v.s.phone2 ? html`<br /><a href="tel:${v.s.phone2.replace(/[^\d+]/g, "")}">${v.s.phone2}</a> <small class="muted">${v.t("contacts.desk")}</small>` : ""}</div></li>
+          <li>${icon("clock")}<div><span class="label">${v.t("contacts.hours")}</span>${v.l(v.s.hours) || html`<span class="tbd">${v.t("tbd")}</span>`}</div></li>
+          ${v.s.email ? html`<li>${icon("mail")}<div><span class="label">${v.t("contacts.email")}</span><a href="mailto:${v.s.email}">${v.s.email}</a></div></li>` : ""}
         </ul>
         <div class="socials-block" data-reveal>
           <h3 class="useful__title">${v.t("contacts.socials")}</h3>

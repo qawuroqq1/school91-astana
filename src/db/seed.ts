@@ -1,8 +1,16 @@
 import { config } from "../config.ts";
 import { hashPassword, randomToken } from "../lib/security.ts";
 import { cmsPageKeys } from "../site/structure.ts";
-import { announcements, news, pages, users } from "./repo.ts";
+import { announcements, gallery, news, pages, users } from "./repo.ts";
 import { db, tx } from "./index.ts";
+
+/** Photos published by the school itself on its verified 2GIS card ("От владельца"). */
+export const SCHOOL_PHOTOS = [
+  { url: "https://i3.photo.2gis.com/images/branch/0/30258560160783628_7091_1280x.jpg", caption: { kz: "Мектеп оқушылары", ru: "Ученики школы", en: "Our students" } },
+  { url: "https://i6.photo.2gis.com/images/branch/0/30258560162221190_4f32_1280x.jpg", caption: { kz: "Ашық аспан астындағы сабақ", ru: "Занятие на свежем воздухе", en: "An outdoor class" } },
+  { url: "https://i4.photo.2gis.com/images/branch/0/30258560162237184_4106_1280x.jpg", caption: { kz: "Шығармашылық шеберхана", ru: "Творческая мастерская", en: "A creative workshop" } },
+  { url: "https://i4.photo.2gis.com/images/branch/0/30258560153896217_e6d0_1280x.jpg", caption: { kz: "Бірге сурет саламыз", ru: "Рисуем вместе", en: "Painting together" } },
+];
 
 /** Facts about the state symbols of Kazakhstan are public and verifiable. */
 const SYMBOLS = {
@@ -87,6 +95,9 @@ export function seed(): void {
       },
       null,
     );
+
+    const album = gallery.saveAlbum({ title: { kz: "Мектеп өмірі", ru: "Школьная жизнь", en: "School life" }, sort: 0 });
+    for (const p of SCHOOL_PHOTOS) gallery.addImage({ album_id: album, file: p.url, caption: p.caption, width: 1280, height: 960 });
 
     announcements.save({
       text: {

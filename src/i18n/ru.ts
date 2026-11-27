@@ -26,7 +26,7 @@ export const ru = {
   "a11y.imagesOff": "Скрыть",
   "a11y.reset": "Обычная версия сайта",
 
-  "hero.kicker": "Общеобразовательная школа · Астана",
+  "hero.kicker": "Школа-гимназия · Астана",
   "hero.about": "О школе",
   "hero.more": "Подробнее",
   "hero.photoNote": "Временное изображение. Будет заменено фотографией школы.",
@@ -173,6 +173,11 @@ export const ru = {
   "err.search": "Поиск по сайту",
 
   "date.today": "Сегодня",
+  "contacts.reception": "Приёмная",
+  "contacts.desk": "Вахта",
+  "contacts.source": "Контакты указаны по подтверждённой карточке школы в 2GIS.",
+  "gallery.life": "Школьная жизнь",
+  "hero.route": "Построить маршрут",
   "social.fbGroup": "Группа школы",
   "social.follow": "Подписаться",
   "social.soon": "Ссылка скоро появится",

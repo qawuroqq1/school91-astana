@@ -1365,3 +1365,69 @@ html.a11y-scheme-high .utility, html.a11y-scheme-high .announce, html.a11y-schem
 .btn--gold { --btn-bg: #ffc72c; --btn-fg: #2b1f00; }
 .btn--gold:hover { --btn-bg: #ffd457; --btn-fg: #2b1f00; }
 .pk-steps__n { color: #2b1f00; }
+
+/* ======================================================================
+   Modern hero with real photos: collage + facts strip
+   ====================================================================== */
+.btn--sun { --btn-bg: var(--sun-500); --btn-fg: #2b1f00; }
+.btn--sun:hover { --btn-bg: #ffd457; --btn-fg: #2b1f00; }
+.hero { padding-block: clamp(2.5rem, 2rem + 3vw, 4.5rem) clamp(2.5rem, 2rem + 2vw, 3.5rem); background: radial-gradient(ellipse 70% 90% at 85% 10%, #cdeeff 0%, transparent 60%), linear-gradient(180deg, #eaf7fe 0%, #f7fcff 70%, #fff 100%); }
+.hero::before { opacity: 0.6; }
+.hero__grid { grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 5rem); }
+.hero__title { font-size: clamp(2.4rem, 1.4rem + 3.4vw, 4.4rem); }
+.hero__slogan { font-size: 0.5em; margin-top: 0.5em; }
+.hero__sun { width: 440px; right: -130px; top: -170px; opacity: 0.75; }
+
+.hero__media--collage { padding: 0 0 7% 9%; }
+.hero__media--collage .hero__frame { aspect-ratio: 4 / 3.3; border-radius: 28px; }
+.hero__media--collage .hero__frame img { height: 112%; }
+.hero__tile { position: absolute; overflow: hidden; border-radius: 20px; border: 5px solid #fff; background: var(--bg-tint-2); box-shadow: 0 24px 48px -24px rgb(4 97 168 / 0.55); }
+.hero__tile img { width: 100%; height: 100%; object-fit: cover; }
+.hero__tile--a { left: 0; bottom: 0; width: 40%; aspect-ratio: 4 / 3; animation: tileIn 1s var(--ease-out) 0.8s both; }
+.hero__tile--b { right: -4%; top: -6%; width: 30%; aspect-ratio: 1; border-radius: 50%; animation: tileIn 1s var(--ease-out) 1s both; }
+.hero__media--collage .hero__badge { left: auto; right: 6%; top: auto; bottom: -2%; width: 88px; height: 88px; font-size: 2rem; }
+@keyframes tileIn { from { opacity: 0; transform: translateY(18px) scale(0.94); } }
+
+.hero-facts {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: center; gap: 0.5rem 1.5rem;
+  margin: clamp(2rem, 1.5rem + 2vw, 3.5rem) 0 0; padding: 1rem 1rem 1rem 1.5rem; list-style: none;
+  border-radius: 22px; background: rgb(255 255 255 / 0.85); backdrop-filter: blur(12px);
+  border: 1px solid rgb(10 116 196 / 0.12); box-shadow: 0 20px 50px -34px rgb(4 97 168 / 0.6);
+}
+.hero-facts li { display: flex; align-items: center; gap: 0.8rem; min-width: 0; }
+.hero-facts li > .icon { flex: none; width: 42px; height: 42px; padding: 10px; border-radius: 12px; background: var(--sky-100); color: var(--sky-600); }
+.hero-facts li > span { display: grid; min-width: 0; font-weight: 600; font-size: var(--fs-sm); line-height: 1.35; }
+.hero-facts small { font-weight: 500; font-size: var(--fs-xs); color: var(--ink-500); }
+.hero-facts a { color: var(--ink-900); text-decoration: none; }
+.hero-facts a:hover { color: var(--sky-700); }
+.hero-facts__cta { justify-content: flex-end; }
+.hero__scroll { display: none; }
+
+@media (max-width: 1100px) {
+  .hero-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-facts__cta { justify-content: flex-start; }
+}
+@media (max-width: 900px) {
+  .hero__grid { grid-template-columns: 1fr; }
+  .hero__media--collage { max-width: 560px; padding: 0 0 9% 8%; }
+}
+@media (max-width: 640px) {
+  .hero-facts { grid-template-columns: 1fr; padding: 1rem; }
+  .hero-facts__cta .btn { width: 100%; }
+  .hero__media--collage .hero__badge { width: 64px; height: 64px; font-size: 1.4rem; }
+}
+html.a11y-noimg .hero__tile { display: none; }
+/* longer official name: brand wraps to two tight lines, city moves out of the header */
+.site-header .brand__name { font-size: 1rem; line-height: 1.12; max-width: 9.5em; }
+.site-header .brand__city { display: none; }
+.hero__title { font-size: clamp(2.2rem, 1.2rem + 3vw, 3.9rem); }
+html[lang="kk"] .main-nav__link { padding-inline: 0.32rem; font-size: 0.8rem; }
+html[lang="kk"] .main-nav__link::after { left: 0.32rem; right: 0.32rem; }
+html[lang="kk"] .main-nav__link .icon { display: none; }
+@media (max-width: 480px) {
+  .utility__contacts span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .utility__contacts a { min-width: 32px; justify-content: center; }
+  .utility__actions { gap: 0.9rem; }
+}
+.hero__frame img { object-position: center 35%; }
+.hero { padding-bottom: clamp(3rem, 2.5rem + 2vw, 4.5rem); }

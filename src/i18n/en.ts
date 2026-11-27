@@ -27,7 +27,7 @@ export const en: Dict = {
   "a11y.imagesOff": "Hide",
   "a11y.reset": "Standard version",
 
-  "hero.kicker": "Secondary school · Astana",
+  "hero.kicker": "School-gymnasium · Astana",
   "hero.about": "About the school",
   "hero.more": "Learn more",
   "hero.photoNote": "Temporary image. It will be replaced with a photo of the school.",
@@ -174,6 +174,11 @@ export const en: Dict = {
   "err.search": "Search the site",
 
   "date.today": "Today",
+  "contacts.reception": "Reception",
+  "contacts.desk": "Front desk",
+  "contacts.source": "Contacts are taken from the school's verified 2GIS listing.",
+  "gallery.life": "School life",
+  "hero.route": "Get directions",
   "social.fbGroup": "School group",
   "social.follow": "Follow",
   "social.soon": "Link coming soon",

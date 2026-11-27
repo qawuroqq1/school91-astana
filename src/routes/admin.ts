@@ -108,7 +108,7 @@ function settingsPage(ctx: Ctx): void {
         <p class="a-muted">Пустые поля показываются на сайте как «Уточняется». Указывайте только проверенные данные.</p>
         ${l10nInputs("address", "Адрес", s.address)}
         ${l10nInputs("hours", "Режим работы", s.hours)}
-        <div class="a-row">${input("phone", "Телефон", s.phone, { placeholder: "+7 (7172) 00-00-00" })}${input("email", "Эл. почта", s.email, { type: "email" })}</div>
+        <div class="a-row">${input("phone", "Телефон приёмной", s.phone, { placeholder: "+7 (7172) 00-00-00" })}${input("phone2", "Второй телефон (вахта)", s.phone2)}${input("email", "Эл. почта", s.email, { type: "email" })}</div>
         <div class="a-row">${input("mapLat", "Широта (карта)", s.mapLat, { placeholder: "51.1282" })}${input("mapLng", "Долгота (карта)", s.mapLng, { placeholder: "71.4306" })}</div>
         ${input("gis2Url", "Ссылка на организацию в 2GIS", s.gis2Url, { type: "url" })}
       </section>
@@ -145,7 +145,7 @@ async function saveSettingsHandler(ctx: Ctx): Promise<void> {
   const s = getSettings();
   const patch: Partial<Settings> = {};
   for (const k of ["schoolName", "shortName", "slogan", "heroText", "aboutText", "address", "hours", "profcomRoom", "profcomHours"] as const) patch[k] = readL10n(f, k);
-  for (const k of ["phone", "email", "instagram", "facebook", "youtube", "telegram", "mapLat", "mapLng", "gis2Url", "profcomPhone", "profcomEmail"] as const) patch[k] = (f[k] || "").trim();
+  for (const k of ["phone", "phone2", "email", "instagram", "facebook", "youtube", "telegram", "mapLat", "mapLng", "gis2Url", "profcomPhone", "profcomEmail"] as const) patch[k] = (f[k] || "").trim();
   for (const k of ["mapLat", "mapLng"] as const) if (patch[k] && !Number.isFinite(Number(patch[k]))) patch[k] = "";
   const stats: Stat[] = [];
   for (let i = 0; i < 12; i++) {
